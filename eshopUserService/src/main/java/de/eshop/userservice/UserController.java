@@ -13,36 +13,57 @@ import de.eshop.userservice.UserManagerImpl;
 
 @RestController
 public class UserController {
-
-//	@Autowired
-//	private UserRepository repo;
 	
 	@Autowired
 	private UserManager repo;
+	
+	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	public ResponseEntity<?> registerUser(@RequestBody User user) {
+		repo.registerUser(user);
+		return new ResponseEntity<>(null, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
+	public ResponseEntity<User> getUserByUsername(@PathVariable String username){
+		User user = repo.getUserByUsername(username);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/user/{userId}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteUserById(@PathVariable Integer userId) {
+		repo.deleteUserById(userId);
+		return new ResponseEntity<>(null, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	public ResponseEntity<Iterable<User>> getUserByUsername(){
+		Iterable<User> allUsers = repo.getAllUsers();
+		return new ResponseEntity<>(allUsers, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/role/{roleLevel}", method = RequestMethod.GET)
+	public ResponseEntity<Role> getRoleByLevel(@PathVariable Integer roleLevel){
+		Role role = repo.getRoleByLevel(roleLevel);
+		return new ResponseEntity<>(role, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public ResponseEntity<Boolean> doesUserAlreadyExist (@RequestParam("username") String username){
+		boolean userExist = repo.doesUserAlreadyExist(username);
+		return new ResponseEntity<>(userExist, HttpStatus.OK);
+	}
 
 //	@RequestMapping(value = "/users", method = RequestMethod.GET)
 //	public ResponseEntity<Iterable<User>> getUsers() {
 //		Iterable<User> allPolls = repo.findAll();
 //		return new ResponseEntity<>(allPolls, HttpStatus.OK);
 //	}
-
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public ResponseEntity<Iterable<User>> getUserByUsername (){
-		Iterable<User> allUsers = repo.getAllUsers();
-		return new ResponseEntity<>(allUsers, HttpStatus.OK);
-	}
 	
 //	@RequestMapping(value = "/user", method = RequestMethod.GET)
 //	public ResponseEntity<User> getUserByUsername (@RequestParam("username") String username){
 //		User user = repo.getUserByUsername(username);
 //		return new ResponseEntity<>(user, HttpStatus.OK);
 //	}
-	
-	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUserByUsername (@PathVariable String username){
-		User user = repo.getUserByUsername(username);
-		return new ResponseEntity<>(user, HttpStatus.OK);
-	}
 	
 //	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
 //	public ResponseEntity<Boolean> doesUserAlreadyExist (@PathVariable String username, @RequestParam("exist") String exist){

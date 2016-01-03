@@ -6,7 +6,8 @@ import de.eshop.userservice.User;
 
 public interface UserManager {
     
-    public void registerUser(String username, String name, String lastname, String password, Role role);
+//    public void registerUser(String username, String name, String lastname, String password, Role role);
+    public void registerUser(User user);
     
     public User getUserByUsername(String username);
     

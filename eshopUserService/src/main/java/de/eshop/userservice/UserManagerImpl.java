@@ -24,14 +24,21 @@ public class UserManagerImpl implements UserManager {
 		helper = new UserDAO();
 	}
 
-	
 	@Override
-	public void registerUser(String username, String name, String lastname, String password, Role role) {
+	public void registerUser(User user) {
 
-		User user = new User(username, name, lastname, password, role);
+		User newUser = new User(user.getUsername(), user.getFirstname(), user.getLastname(), user.getPassword(), user.getRole());
 
-		helper.saveObject(user);
+		helper.saveObject(newUser);
 	}
+	
+//	@Override
+//	public void registerUser(String username, String name, String lastname, String password, Role role) {
+//
+//		User user = new User(username, name, lastname, password, role);
+//
+//		helper.saveObject(user);
+//	}
 
 	
 	@Override

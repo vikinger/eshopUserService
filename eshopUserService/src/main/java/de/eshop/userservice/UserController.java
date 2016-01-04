@@ -36,7 +36,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public ResponseEntity<Iterable<User>> getUserByUsername(){
+	public ResponseEntity<Iterable<User>> getAllUsers(){
 		Iterable<User> allUsers = repo.getAllUsers();
 		return new ResponseEntity<>(allUsers, HttpStatus.OK);
 	}

@@ -4,9 +4,14 @@ import de.eshop.userservice.UserManager;
 import de.eshop.userservice.RoleDAO;
 import de.eshop.userservice.UserDAO;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import de.eshop.userservice.Role;
 import de.eshop.userservice.User;
@@ -19,6 +24,7 @@ import de.eshop.userservice.User;
 @Repository
 public class UserManagerImpl implements UserManager {
 	UserDAO helper;
+	private final Map<String, User> userCache = new LinkedHashMap<String, User>();
 	
 	public UserManagerImpl() {
 		helper = new UserDAO();
@@ -32,21 +38,20 @@ public class UserManagerImpl implements UserManager {
 		helper.saveObject(newUser);
 	}
 	
-//	@Override
-//	public void registerUser(String username, String name, String lastname, String password, Role role) {
-//
-//		User user = new User(username, name, lastname, password, role);
-//
-//		helper.saveObject(user);
-//	}
-
-	
 	@Override
+	@HystrixCommand(fallbackMethod = "getUserFromCache", commandProperties = {
+	@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "2") })
 	public User getUserByUsername(String username) {
 		if (username == null || username.equals("")) {
 			return null;
 		}
-		return helper.getUserByUsername(username);
+		User tempUser = helper.getUserByUsername(username);
+		userCache.putIfAbsent(username, tempUser);
+		return tempUser;
+	}
+	
+	public User getUserFromCache(String username) {
+		return userCache.getOrDefault(username, new User());
 	}
 
 	@Override
